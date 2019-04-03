@@ -84,19 +84,20 @@ function updateToolTip(chosenXAxis, circlesGroup) {
       return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
     });
 
-  circlesGroup.call(toolTip);
+  chartGroup.call(toolTip);
+
 
   circlesGroup.on("mouseover", function(data) {
-    toolTip.show(data);
+    toolTip.show(data, this)
+    .attr("fill", "black")
+    .attr("opacity", "0.3")
   })
     // onmouseout event
-    .on("mouseout", function(stateData, index) {
-      toolTip.hide(data);
+    .on("mouseout", function(data, index) {
+      toolTip.hide(data, this);
     });
-
   return circlesGroup;
 }
-
 
 d3.csv("assets/data/stateData.csv").then(stateData => {
 	  
@@ -139,7 +140,7 @@ d3.csv("assets/data/stateData.csv").then(stateData => {
     .attr("cy", d => yLinearScale(d.income))
     .attr("r", 20)
     .attr("fill", "pink")
-    .attr("opacity", ".5");
+    .attr("opacity", ".4");
     
      // Create group for  2 x- axis labels
   var labelsGroup = chartGroup.append("g")
@@ -161,7 +162,7 @@ d3.csv("assets/data/stateData.csv").then(stateData => {
 
 var healthcareDataLabel = labelsGroup.append("text")
     .attr("x", 0)
-    .attr("y", 50)
+    .attr("y", 60)
     .attr("value", "healthcare") // value to grab for event listener
     .classed("inactive", true)
     .text("Available Healthcare per State");
@@ -174,6 +175,10 @@ var healthcareDataLabel = labelsGroup.append("text")
     .attr("dy", "1em")
     .classed("axis-text", true)
     .text("Income");
+// LABEL GROUP Y  ===========================================START
+
+
+// LABEL GROUP Y  ===========================================END
 
 
  // updateToolTip function above csv import

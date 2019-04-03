@@ -77,15 +77,44 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   }
   
   
-  var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([80, -60])
+  // var toolTip = d3.tip()
+//     .attr("class", "d3-tip")
+//     .offset([80, -60])
+//     .html(function(d) {
+//       return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
+//     });
+// 
+//   circlesGroup.call(toolTip);
+var toolTip = d3
+    .tip()
+    .attr("class", "d3-tip")
+    .offset([40, -60])
     .html(function(d) {
-      return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
+      // x key
+      var theX;
+      // Grab the state name.
+      var theState = "<div>" + d.state + "</div>";
+      // Snatch the y value's key and value.
+      var theY = "<div>" + curY + ": " + d[curY] + "%</div>";
+      // If the x key is poverty
+      if (curX === "poverty") {
+        // Grab the x key and a version of the value formatted to show percentage
+        theX = "<div>" + curX + ": " + d[curX] + "%</div>";
+      }
+      else {
+        // Otherwise
+        // Grab the x key and a version of the value formatted to include commas after every third digit.
+        theX = "<div>" +
+          curX +
+          ": " +
+          parseFloat(d[curX]).toLocaleString("en") +
+          "</div>";
+      }
+      // Display what we capture.
+      return theState + theX + theY;
     });
-
+  // Call the toolTip function.
   circlesGroup.call(toolTip);
-
   circlesGroup.on("mouseover", function(data) {
     toolTip.show(data);
   })
