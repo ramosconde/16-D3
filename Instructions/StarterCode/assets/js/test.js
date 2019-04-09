@@ -97,6 +97,27 @@ function renderYCircles(circlesGroup, newYScale, chosenYaxis) {
 
   return circlesGroup;
 }
+
+// function used for updating circles group with a transition to
+// new circles
+function renderXText(textGroup, newXScale, chosenXaxis) {
+
+  textGroup.transition()
+    .duration(1000)
+    .attr("dx", d => newXScale(d[chosenXAxis]) -20/2.5);
+
+  return textGroup;
+}
+
+// function used for updating circles group with a transition to new circles ===========y3
+function renderYText(textGroup, newYScale, chosenYaxis) {
+
+  textGroup.transition()
+    .duration(1000)
+    .attr("dy", d => newYScale(d[chosenYAxis]) + 20/2.5);
+
+  return textGroup;
+}
 // ==================================================================================y3 end
 
 
@@ -190,6 +211,7 @@ d3.csv("assets/data/stateData.csv").then(stateData => {
     data.income = +data.income;
     data.smokes = +data.smokes;
     data.poverty = +data.poverty;
+//     data.abbr = +data.abbr;
   });
 
  // xLinearScale function above csv import
@@ -199,6 +221,17 @@ d3.csv("assets/data/stateData.csv").then(stateData => {
   var yLinearScale = d3.scaleLinear()
     .domain([0, d3.max(stateData, d => d.income)])
     .range([height, 0]);
+    
+  var textGroup = chartGroup.selectAll("text")
+    .data(stateData)
+    .enter()
+    .append("text")
+    .text(d => d.abbr)
+    .attr("dx", d => xLinearScale(d[chosenXAxis]) -20/2.5)
+    .attr("dy", d => yLinearScale(d.income) + 20/2.5)
+//     .attr("r", 20)
+//     .attr("fill", "pink")
+//     .attr("opacity", ".4");
     
     // Create initial axis functions
   var bottomAxis = d3.axisBottom(xLinearScale);
@@ -226,6 +259,8 @@ d3.csv("assets/data/stateData.csv").then(stateData => {
     .attr("r", 20)
     .attr("fill", "pink")
     .attr("opacity", ".4");
+    
+
     
      // Create group for  3 x- axis labels
   var labelsGroup = chartGroup.append("g")
@@ -298,10 +333,35 @@ var povertyDataLabel = yLabelsGroup.append("text")
 
 // Y Axis lable group =============================================================== y5 end
 
-// LABEL GROUP Y  ===========================================START
+// LABEL GROUP Y  ===============================================================bubble names START
+   //  Define the data for the circles + text
+//     var r = 10;
+//     
+//     var elem = chartGroup.selectAll("g circle")
+//         .data(stateData);
+//  
+//     Create and place the "blocks" containing the circle and the text  
+//     var elemEnter = elem.enter()
+//         .append("g")
+//         .attr("id", "elemEnter");
+//     
+//     // Create the circle for each block
+//     elemEnter.append("circle")
+//         .attr('cx', d => xLinearScale(d[chosenXAxis]))
+//         .attr('cy', d => yLinearScale(d[chosenYAxis]))
+//         .attr('r', r)
+//         .classed("stateCircle", true);
+//     
+//     Create the text for each circle
+//     elemEnter.append("text")
+//         .attr("dx", d => xLinearScale(d[chosenXAxis]))
+//         .attr("dy", d => yLinearScale(d[chosenYAxis]))
+//         .classed("stateText", true)
+//         .attr("font-size", parseInt(r*0.8))
+//         .text(d => d.abbr);
 
 
-// LABEL GROUP Y  ===========================================END
+// LABEL GROUP Y  ================================================================bubble names END
 
 
  // updateToolTip function above csv import
@@ -319,16 +379,14 @@ var povertyDataLabel = yLabelsGroup.append("text")
 
         // functions here found above csv import
         // updates x scale for new data
-//         xLinearScale = xScale(stateData, chosenXAxis);
         yLinearScale = yScale(stateData, chosenYAxis);
 
         // updates x axis with transition
-//         xAxis = renderXAxes(xLinearScale, xAxis);
     	yAxis = renderYAxes(yLinearScale, yAxis);
 
         // updates circles with new x values
-//         circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
+        textGroup = renderYText(textGroup, yLinearScale, chosenYAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
@@ -386,15 +444,13 @@ var povertyDataLabel = yLabelsGroup.append("text")
         // functions here found above csv import
         // updates x scale for new data
         xLinearScale = xScale(stateData, chosenXAxis);
-//         yLinearScale = yScale(stateData, chosenYAxis);
 
         // updates x axis with transition
         xAxis = renderXAxes(xLinearScale, xAxis);
-//     	yAxis = renderYAxes(yLinearScale, yAxis);
 
         // updates circles with new x values
         circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
-//         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
+        textGroup = renderXText(textGroup, xLinearScale, chosenXAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
